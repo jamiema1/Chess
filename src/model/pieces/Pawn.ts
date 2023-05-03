@@ -3,7 +3,6 @@ import {Position} from "../Position";
 import {Colour} from "../Colour";
 import {Board} from "../Board";
 import {IllegalMoveError} from "../errors/IllegalMoveError";
-import {Move} from "../Move";
 
 export class Pawn extends IPiece {
 
@@ -19,17 +18,17 @@ export class Pawn extends IPiece {
 		this.changePieces(board, endPosition);
 	}
 
-	public changePieces(board: Board, endPosition: Position): void {
+	protected changePieces(board: Board, endPosition: Position): void {
 		board.board[super.position.file][super.position.rank] = null;
 		super.position = endPosition;
 		board.board[endPosition.file][endPosition.rank] = this;
 	}
 
-	public legalMove(board: Board, endPosition: Position): boolean {
-		const allPossiblePositions: Position[] = this.allPossibleEndPositions(board);
+	protected legalMove(board: Board, endPosition: Position): boolean {
+
 		let legalMove: boolean = false;
 
-		for (const position of allPossiblePositions) {
+		for (const position of this.allEndPositions(board)) {
 			if (JSON.stringify(position) === JSON.stringify(endPosition)) {
 				legalMove = true;
 				break;
@@ -38,65 +37,70 @@ export class Pawn extends IPiece {
 		return legalMove;
 	}
 
-	public allPossibleEndPositions(board: Board): Position[] {
+	protected allEndPositions(board: Board): Position[] {
 
 		const rank: number = this.position.rank;
 		const file: number = this.position.file;
-		const moveOneUp: Position = new Position(file, rank + 1);
-		const moveTwoUp: Position = new Position(file, rank + 2);
-		const moveOneDown: Position = new Position(file, rank - 1);
-		const moveTwoDown: Position = new Position(file, rank - 2);
-
-		const Up: Piece = board.board[file][rank + 1];
-		const Down: Piece = board.board[file][rank - 1];
-		const diagonalUpLeft: Piece = board.board[file - 1][rank + 1];
-		const diagonalUpRight: Piece = board.board[file + 1][rank + 1];
-		const diagonalDownLeft: Piece = board.board[file - 1][rank - 1];
-		const diagonalDownRight: Piece = board.board[file + 1][rank - 1];
-		const moveDiagonalUpLeft: Position = new Position(file - 1, rank + 1);
-		const moveDiagonalUpRight: Position = new Position(file + 1, rank + 1);
-		const moveDiagonalDownLeft: Position = new Position(file - 1, rank - 1);
-		const moveDiagonalDownRight: Position = new Position(file + 1, rank - 1);
 
 		let allPositions: Position[] = [];
 		switch (this.colour) {
 			case Colour.WHITE:
-				if (rank === 2) {
-					allPositions.push(moveOneUp, moveTwoUp);
-				}
-				if (rank === 8) {
-					break;
-				}
-				if (file > 0 && diagonalUpLeft !== null && diagonalUpLeft.colour !== this.colour) {
-					allPositions.push(moveDiagonalUpLeft);
-				}
-				if (file < 9 && diagonalUpRight !== null && diagonalUpRight.colour !== this.colour) {
-					allPositions.push(moveDiagonalUpRight);
-				}
-				if (Up === null) {
-					allPositions.push(moveOneUp);
-				}
+				allPositions = this.allWhiteEndPositions(file, rank, board);
 				break;
 			case Colour.BLACK:
-				if (rank === 7) {
-					allPositions.push(moveOneDown, moveTwoDown);
-				}
-				if (rank === 1) {
-					break;
-				}
-				if (file > 0 && diagonalDownLeft !== null && diagonalDownLeft.colour !== this.colour) {
-					allPositions.push(moveDiagonalDownLeft);
-				}
-				if (file < 9 && diagonalDownRight !== null && diagonalDownRight.colour !== this.colour) {
-					allPositions.push(moveDiagonalDownRight);
-				}
-				if (Down === null) {
-					allPositions.push(moveOneDown);
-				}
+				allPositions = this.allBlackEndPositions(board, file, rank);
 				break;
 		}
 
 		return allPositions;
+	}
+
+	protected allBlackEndPositions(board: Board, file: number, rank: number) {
+		let allBlackPositions: Position[] = [];
+		const Down: Piece = board.board[file][rank - 1];
+		const diagonalDownLeft: Piece = board.board[file - 1][rank - 1];
+		const diagonalDownRight: Piece = board.board[file + 1][rank - 1];
+		const moveOneDown: Position = new Position(file, rank - 1);
+		const moveTwoDown: Position = new Position(file, rank - 2);
+		const moveDiagonalDownLeft: Position = new Position(file - 1, rank - 1);
+		const moveDiagonalDownRight: Position = new Position(file + 1, rank - 1);
+		if (rank === 7) {
+			allBlackPositions.push(moveOneDown, moveTwoDown);
+		}
+		if (rank > 1 && Down === null) {
+			allBlackPositions.push(moveOneDown);
+		}
+		if (file > 1 && diagonalDownLeft !== null && diagonalDownLeft.colour !== this.colour) {
+			allBlackPositions.push(moveDiagonalDownLeft);
+		}
+		if (file < 8 && diagonalDownRight !== null && diagonalDownRight.colour !== this.colour) {
+			allBlackPositions.push(moveDiagonalDownRight);
+		}
+		return allBlackPositions;
+	}
+
+	protected allWhiteEndPositions(file: number, rank: number, board: Board): Position[] {
+		let allWhitePositions: Position[] = [];
+		const Up: Piece = board.board[file][rank + 1];
+		const diagonalUpLeft: Piece = board.board[file - 1][rank + 1];
+		const diagonalUpRight: Piece = board.board[file + 1][rank + 1];
+		const moveOneUp: Position = new Position(file, rank + 1);
+		const moveTwoUp: Position = new Position(file, rank + 2);
+		const moveDiagonalUpLeft: Position = new Position(file - 1, rank + 1);
+		const moveDiagonalUpRight: Position = new Position(file + 1, rank + 1);
+		if (rank === 2) {
+			allWhitePositions.push(moveOneUp, moveTwoUp);
+		}
+		if (rank < 8 && Up === null) {
+			allWhitePositions.push(moveOneUp);
+		}
+		if (file > 1 && diagonalUpLeft !== null && diagonalUpLeft.colour !== this.colour) {
+			allWhitePositions.push(moveDiagonalUpLeft);
+		}
+		if (file < 8 && diagonalUpRight !== null && diagonalUpRight.colour !== this.colour) {
+			allWhitePositions.push(moveDiagonalUpRight);
+		}
+		return allWhitePositions;
 	}
 
 

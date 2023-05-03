@@ -1,4 +1,4 @@
-import {IPiece, Piece} from "./Piece";
+import {IPiece} from "./Piece";
 import {Position} from "../Position";
 import {Colour} from "../Colour";
 import {Board} from "../Board";
@@ -13,16 +13,24 @@ export class Queen extends IPiece {
 		return;
 	}
 
-	public legalMove(board: Board, endPosition: Position): boolean {
+	protected legalMove(board: Board, endPosition: Position): boolean {
 		return false;
 	}
 
-	public allPossibleEndPositions(board: Board): Position[] {
+	protected allEndPositions(board: Board): Position[] {
 		return [];
 	}
 
-	public changePieces(board: Board, endPosition: Position): void {
+	protected changePieces(board: Board, endPosition: Position): void {
 		return;
+	}
+
+	protected allBlackEndPositions(board: Board, file: number, rank: number): Position[] {
+		return [];
+	}
+
+	protected allWhiteEndPositions(file: number, rank: number, board: Board): Position[] {
+		return [];
 	}
 
 	public print(): string {

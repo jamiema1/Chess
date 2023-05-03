@@ -20,5 +20,6 @@ describe("Board Tests", function () {
 		board.print();
 		board.move(new Move(new Position(1,4), new Position(1,5), Colour.WHITE));
 		board.print();
+
 	});
 });
