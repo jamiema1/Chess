@@ -9,22 +9,6 @@ export class Rook extends IPiece {
 		super(position, colour);
 	}
 
-	public move(board: Board, endPosition: Position) {
-		return;
-	}
-
-	protected legalMove(board: Board, endPosition: Position): boolean {
-		return false;
-	}
-
-	protected allEndPositions(board: Board): Position[] {
-		return [];
-	}
-
-	protected changePieces(board: Board, endPosition: Position): void {
-		return;
-	}
-
 	protected allBlackEndPositions(board: Board, file: number, rank: number): Position[] {
 		return [];
 	}

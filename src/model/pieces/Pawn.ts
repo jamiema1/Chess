@@ -10,53 +10,9 @@ export class Pawn extends IPiece {
 		super(position, colour);
 	}
 
-	public move(board: Board, endPosition: Position): void {
-		if(!this.legalMove(board, endPosition)) {
-			throw new IllegalMoveError("Illegal move");
-		}
-
-		this.changePieces(board, endPosition);
-	}
-
-	protected changePieces(board: Board, endPosition: Position): void {
-		board.board[super.position.file][super.position.rank] = null;
-		super.position = endPosition;
-		board.board[endPosition.file][endPosition.rank] = this;
-	}
-
-	protected legalMove(board: Board, endPosition: Position): boolean {
-
-		let legalMove: boolean = false;
-
-		for (const position of this.allEndPositions(board)) {
-			if (JSON.stringify(position) === JSON.stringify(endPosition)) {
-				legalMove = true;
-				break;
-			}
-		}
-		return legalMove;
-	}
-
-	protected allEndPositions(board: Board): Position[] {
-
-		const rank: number = this.position.rank;
-		const file: number = this.position.file;
-
-		let allPositions: Position[] = [];
-		switch (this.colour) {
-			case Colour.WHITE:
-				allPositions = this.allWhiteEndPositions(file, rank, board);
-				break;
-			case Colour.BLACK:
-				allPositions = this.allBlackEndPositions(board, file, rank);
-				break;
-		}
-
-		return allPositions;
-	}
-
 	protected allBlackEndPositions(board: Board, file: number, rank: number) {
 		let allBlackPositions: Position[] = [];
+
 		const Down: Piece = board.board[file][rank - 1];
 		const diagonalDownLeft: Piece = board.board[file - 1][rank - 1];
 		const diagonalDownRight: Piece = board.board[file + 1][rank - 1];
@@ -102,7 +58,6 @@ export class Pawn extends IPiece {
 		}
 		return allWhitePositions;
 	}
-
 
 	public print(): string {
 		return "P";

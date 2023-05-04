@@ -1,6 +1,7 @@
 import {Position} from "../Position";
 import {Colour} from "../Colour";
 import {Board} from "../Board";
+import {IllegalMoveError} from "../errors/IllegalMoveError";
 
 /**
  * Block Tags
@@ -107,17 +108,53 @@ export abstract class IPiece {
      * @param {Board} board - the board the piece is on
      * @param {Position} endPosition - the position the piece is being moved to
      */
-    public abstract move(board: Board, endPosition: Position): void;
+	public move(board: Board, endPosition: Position): void {
+	    if(!this.legalMove(board, endPosition)) {
+		    throw new IllegalMoveError("Illegal move");
+	    }
 
-    protected abstract legalMove(board: Board, endPosition: Position): boolean;
+	    this.changePieces(board, endPosition);
+	}
 
-	protected abstract allEndPositions(board: Board): Position[];
+	private legalMove(board: Board, endPosition: Position): boolean {
+		let legalMove: boolean = false;
+
+		for (const position of this.allEndPositions(board)) {
+			if (JSON.stringify(position) === JSON.stringify(endPosition)) {
+				legalMove = true;
+				break;
+			}
+		}
+		return legalMove;
+	}
+
+	public allEndPositions(board: Board): Position[] {
+
+		const rank: number = this.position.rank;
+		const file: number = this.position.file;
+
+		let allPositions: Position[] = [];
+		switch (this.colour) {
+			case Colour.WHITE:
+				allPositions = this.allWhiteEndPositions(file, rank, board);
+				break;
+			case Colour.BLACK:
+				allPositions = this.allBlackEndPositions(board, file, rank);
+				break;
+		}
+
+		return allPositions;
+	}
 
 	protected abstract allWhiteEndPositions(file: number, rank: number, board: Board): Position[];
 
 	protected abstract allBlackEndPositions(board: Board, file: number, rank: number): Position[];
 
-	protected abstract changePieces(board: Board, endPosition: Position): void;
+	private changePieces(board: Board, endPosition: Position): void {
+		board.board[this.position.file][this.position.rank] = null;
+		this.position = endPosition;
+		board.board[endPosition.file][endPosition.rank] = this;
+	}
 
     public abstract print(): string;
 
