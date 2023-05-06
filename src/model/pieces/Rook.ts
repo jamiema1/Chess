@@ -5,15 +5,114 @@ import {Board} from "../Board";
 
 export class Rook extends IPiece {
 
-	constructor(position: Position, colour: Colour) {
-		super(position, colour);
+	constructor(position: Position, colour: Colour, board: Board) {
+		super(position, colour, board);
 	}
 
-	protected allBlackEndPositions(board: Board, file: number, rank: number): Position[] {
-		return [];
+	protected endPositions(): Position[] {
+
+		return this.endPositionsUp()
+			.concat(
+				this.endPositionsDown(),
+				this.endPositionsLeft(),
+				this.endPositionsRight()
+			);
 	}
 
-	protected allWhiteEndPositions(file: number, rank: number, board: Board): Position[] {
+	private endPositionsUp(): Position[] {
+
+		let file = this.position.file;
+		let rank = this.position.rank;
+
+		let positions: Position[] = [];
+
+		rank++;
+		while (rank < 9) {
+			if (this.board.board[file][rank] !== null) {
+				if (this.board.board[file][rank]?.colour !== this.colour) {
+					positions.push(new Position(file, rank));
+				}
+				break;
+			}
+
+			positions.push(new Position(file, rank));
+			rank++;
+		}
+
+		return positions;
+	}
+
+	private endPositionsDown(): Position[] {
+
+		let file = this.position.file;
+		let rank = this.position.rank;
+
+		let positions: Position[] = [];
+
+		rank--;
+		while (rank > 0) {
+			if (this.board.board[file][rank] !== null) {
+				if (this.board.board[file][rank]?.colour !== this.colour) {
+					positions.push(new Position(file, rank));
+				}
+				break;
+			}
+
+			positions.push(new Position(file, rank));
+			rank--;
+		}
+
+
+		return positions;
+	}
+
+	private endPositionsLeft(): Position[] {
+
+		let file = this.position.file;
+		let rank = this.position.rank;
+
+		let positions: Position[] = [];
+
+		file--;
+		while (file > 0) {
+			if (this.board.board[file][rank] !== null) {
+				if (this.board.board[file][rank]?.colour !== this.colour) {
+					positions.push(new Position(file, rank));
+				}
+				break;
+			}
+
+			positions.push(new Position(file, rank));
+			file--;
+		}
+
+		return positions;
+	}
+
+	private endPositionsRight(): Position[] {
+
+		let file = this.position.file;
+		let rank = this.position.rank;
+
+		let positions: Position[] = [];
+
+		file++;
+		while (file < 9) {
+			if (this.board.board[file][rank] !== null) {
+				if (this.board.board[file][rank]?.colour !== this.colour) {
+					positions.push(new Position(file, rank));
+				}
+				break;
+			}
+
+			positions.push(new Position(file, rank));
+			file++;
+		}
+
+		return positions;
+	}
+
+	protected captureEndPositions(): Position[] {
 		return [];
 	}
 

@@ -80,20 +80,19 @@ import {IllegalMoveError} from "../errors/IllegalMoveError";
 export abstract class IPiece {
 	private _position: Position;
 	private readonly _colour: Colour;
+	private readonly _board: Board;
 
     /**
      * Creates a piece
      * @constructor
      * @param {Position} position - the position the piece is being made at
      * @param {Colour} colour - the colour the piece is
+     * @param {Board} board - the board the piece is on
      */
-	protected constructor(position: Position, colour: Colour) {
+	protected constructor(position: Position, colour: Colour, board: Board) {
 		this._position = position;
 		this._colour = colour;
-	}
-
-	public get colour(): Colour {
-		return this._colour;
+		this._board = board;
 	}
 
 	public get position(): Position {
@@ -104,22 +103,31 @@ export abstract class IPiece {
 		this._position = value;
 	}
 
+	public get colour(): Colour {
+		return this._colour;
+	}
+
+	public get board(): Board {
+		return this._board;
+	}
+
     /**
-     * @param {Board} board - the board the piece is on
      * @param {Position} endPosition - the position the piece is being moved to
      */
-	public move(board: Board, endPosition: Position): void {
-	    if(!this.legalMove(board, endPosition)) {
+	public move(endPosition: Position): void {
+	    if(!this.legalMove(endPosition)) {
 		    throw new IllegalMoveError("Illegal move");
 	    }
 
-	    this.changePieces(board, endPosition);
+	    this.changePieces(endPosition);
 	}
 
-	private legalMove(board: Board, endPosition: Position): boolean {
+	private legalMove(endPosition: Position): boolean {
 		let legalMove: boolean = false;
 
-		for (const position of this.allEndPositions(board)) {
+		// const endPositions: Position[] = this.openEndPositions().concat(this.captureEndPositions());
+
+		for (const position of this.endPositions()) {
 			if (JSON.stringify(position) === JSON.stringify(endPosition)) {
 				legalMove = true;
 				break;
@@ -128,32 +136,26 @@ export abstract class IPiece {
 		return legalMove;
 	}
 
-	public allEndPositions(board: Board): Position[] {
+	protected abstract endPositions(): Position[];
 
-		const rank: number = this.position.rank;
-		const file: number = this.position.file;
+		// switch (this.colour) {
+		// 	case Colour.WHITE:
+		// 		allPositions = this.allWhiteEndPositions(file, rank, board);
+		// 		break;
+		// 	case Colour.BLACK:
+		// 		allPositions = this.allBlackEndPositions(board, file, rank);
+		// 		break;
+		// }
 
-		let allPositions: Position[] = [];
-		switch (this.colour) {
-			case Colour.WHITE:
-				allPositions = this.allWhiteEndPositions(file, rank, board);
-				break;
-			case Colour.BLACK:
-				allPositions = this.allBlackEndPositions(board, file, rank);
-				break;
-		}
 
-		return allPositions;
-	}
+	// protected abstract openEndPositions(): Position[];
+	//
+	// protected abstract captureEndPositions(): Position[];
 
-	protected abstract allWhiteEndPositions(file: number, rank: number, board: Board): Position[];
-
-	protected abstract allBlackEndPositions(board: Board, file: number, rank: number): Position[];
-
-	private changePieces(board: Board, endPosition: Position): void {
-		board.board[this.position.file][this.position.rank] = null;
+	private changePieces(endPosition: Position): void {
+		this.board.board[this.position.file][this.position.rank] = null;
 		this.position = endPosition;
-		board.board[endPosition.file][endPosition.rank] = this;
+		this.board.board[endPosition.file][endPosition.rank] = this;
 	}
 
     public abstract print(): string;

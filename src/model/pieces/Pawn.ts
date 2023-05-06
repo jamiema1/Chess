@@ -2,12 +2,16 @@ import {IPiece, Piece} from "./Piece";
 import {Position} from "../Position";
 import {Colour} from "../Colour";
 import {Board} from "../Board";
-import {IllegalMoveError} from "../errors/IllegalMoveError";
 
 export class Pawn extends IPiece {
 
-	constructor(position: Position, colour: Colour) {
-		super(position, colour);
+
+	constructor(position: Position, colour: Colour, board: Board) {
+		super(position, colour, board);
+	}
+
+	protected endPositions(): Position[] {
+		return [];
 	}
 
 	protected allBlackEndPositions(board: Board, file: number, rank: number) {
