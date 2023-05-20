@@ -16,6 +16,11 @@ export class Knight extends IPiece {
 
 
 	public print(): string {
-		return "N";
+		switch (this.colour) {
+			case Colour.WHITE:
+				return "Nw";
+			case Colour.BLACK:
+				return "Nb";
+		}
 	}
 }

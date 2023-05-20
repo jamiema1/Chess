@@ -27,18 +27,14 @@ export class Rook extends IPiece {
 		let positions: Position[] = [];
 
 		rank++;
-		while (rank < 9) {
-			if (this.board.board[file][rank] !== null) {
-				if (this.board.board[file][rank]?.colour !== this.colour) {
-					positions.push(new Position(file, rank));
-				}
-				break;
-			}
-
+		while (rank < 9 && this.board.board[file][rank] === null) {
 			positions.push(new Position(file, rank));
 			rank++;
 		}
 
+		if (rank < 9 && this.board.board[file][rank]?.colour !== this.colour) {
+			positions.push(new Position(file, rank));
+		}
 		return positions;
 	}
 
@@ -117,6 +113,11 @@ export class Rook extends IPiece {
 	}
 
 	public print(): string {
-		return "R";
+		switch (this.colour) {
+			case Colour.WHITE:
+				return "Rw";
+			case Colour.BLACK:
+				return "Rb";
+		}
 	}
 }

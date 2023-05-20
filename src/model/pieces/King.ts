@@ -16,6 +16,11 @@ export class King extends IPiece {
 
 
 	public print(): string {
-		return "K";
+		switch (this.colour) {
+			case Colour.WHITE:
+				return "Kw";
+			case Colour.BLACK:
+				return "Kb";
+		}
 	}
 }

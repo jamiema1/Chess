@@ -16,6 +16,11 @@ export class Queen extends IPiece {
 
 
 	public print(): string {
-		return "Q";
+		switch (this.colour) {
+			case Colour.WHITE:
+				return "Qw";
+			case Colour.BLACK:
+				return "Qb";
+		}
 	}
 }

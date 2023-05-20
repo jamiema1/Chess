@@ -94,11 +94,11 @@ export class Board {
 			for (let file = 1; file < 9; file++) {
 				const piece: Piece = this.board[file][rank];
 				if (piece === null) {
-					row = row.concat("+");
+					row = row.concat(" ");
 				} else {
 					row = row.concat(piece.print());
 				}
-
+				row = row.concat(" ");
 			}
 			console.log(row);
 		}

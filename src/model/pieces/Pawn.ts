@@ -64,7 +64,12 @@ export class Pawn extends IPiece {
 	}
 
 	public print(): string {
-		return "P";
+		switch (this.colour) {
+			case Colour.WHITE:
+				return "Pw";
+			case Colour.BLACK:
+				return "Pb";
+		}
 	}
 
 }
